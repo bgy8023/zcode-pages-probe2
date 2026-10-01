@@ -1,0 +1,19 @@
+name: Probe Pages Permission
+on: workflow_dispatch
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Try enable pages with check.yml exact body
+        run: |
+          code=$(curl -s -o /dev/null -w %{http_code} -H "Authorization: Bearer $GITHUB_TOKEN" "https://api.github.com/repos/$GITHUB_REPOSITORY/pages")
+          echo "GET pages status: $code"
+          echo "--- PUT check.yml body ---"
+          curl -sS -X PUT -H "Authorization: Bearer $GITHUB_TOKEN" -H "Content-Type: application/json" -d '{"build_type":"workflow","source":{"branches":["main"],"path":"/public"}}' "https://api.github.com/repos/$GITHUB_REPOSITORY/pages"
+          echo
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

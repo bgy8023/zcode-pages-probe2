@@ -1,23 +1,24 @@
-name: Probe Pages Admin
+name: Probe Pages Correct Body
 on: workflow_dispatch
 permissions:
   contents: read
   pages: write
   id-token: write
-  administration: write
 jobs:
   probe:
     runs-on: ubuntu-latest
     steps:
-      - name: PUT with administration:write added
+      - name: PUT with CORRECT body, pages write only
         run: |
-          echo "--- correct body + admin ---"
+          echo "--- correct body, pages:write ---"
           curl -sS -X PUT -H "Authorization: Bearer $GITHUB_TOKEN" -H "Content-Type: application/json" \
             -d '{"build_type":"workflow","source":{"branch":"main","path":"/"}}' \
             "https://api.github.com/repos/$GITHUB_REPOSITORY/pages"
           echo
-          echo "--- verify GET ---"
-          curl -s -o /dev/null -w "GET=%{http_code}\n" -H "Authorization: Bearer $GITHUB_TOKEN" \
+          echo "--- POST create, correct body ---"
+          curl -sS -X POST -H "Authorization: Bearer $GITHUB_TOKEN" -H "Content-Type: application/json" \
+            -d '{"build_type":"workflow","source":{"branch":"main","path":"/"}}' \
             "https://api.github.com/repos/$GITHUB_REPOSITORY/pages"
+          echo
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

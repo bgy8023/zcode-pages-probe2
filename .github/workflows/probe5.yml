@@ -1,0 +1,16 @@
+name: Probe WriteAll
+on: workflow_dispatch
+permissions: write-all
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: PUT pages with write-all permissions
+        run: |
+          echo "--- write-all + correct body ---"
+          curl -sS -X PUT -H "Authorization: Bearer $GITHUB_TOKEN" -H "Content-Type: application/json" \
+            -d '{"build_type":"workflow","source":{"branch":"main","path":"/"}}' \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/pages"
+          echo
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

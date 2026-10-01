@@ -1,0 +1,17 @@
+name: Probe GET Pages
+on: workflow_dispatch
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: GET pages on repo WITH pages enabled
+        run: |
+          code=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $GITHUB_TOKEN" \
+            "https://api.github.com/repos/bgy8023/zcode-pages-probe/pages")
+          echo "GET (pages-enabled repo) status: $code"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
